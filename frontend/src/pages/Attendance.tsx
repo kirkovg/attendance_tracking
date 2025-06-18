@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import api from '../services/api';
 import { AttendanceRecord } from '../types';
+import { AxiosError } from 'axios';
 
 const Attendance: React.FC = () => {
     const [name, setName] = useState('');
@@ -83,7 +84,7 @@ const Attendance: React.FC = () => {
         setSuccess(null);
 
         try {
-            const response = await api.post<AttendanceRecord>('/attendance', {
+            await api.post<AttendanceRecord>('/attendance', {
                 name,
                 email,
                 image,
@@ -96,7 +97,8 @@ const Attendance: React.FC = () => {
             setName('');
             setEmail('');
         } catch (err) {
-            setError('Failed to record attendance');
+            const data = (err as AxiosError).response?.data as any;
+            setError(`${data?.message || 'Failed to record attendance'}`);
             console.error(err);
         } finally {
             setLoading(false);

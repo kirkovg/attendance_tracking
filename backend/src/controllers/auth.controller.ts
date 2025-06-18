@@ -6,6 +6,7 @@ import {
     FastifyRequest,
     FastifyReply,
 } from 'fastify';
+import { authenticateAdmin } from '../utils/auth.middleware.js';
 
 export class AuthController {
     constructor(private authService: AuthService) {}
@@ -45,6 +46,34 @@ export class AuthController {
             }
         );
 
+        // Logout endpoint (requires authentication)
+        fastify.post(
+            '/auth/logout',
+            { preHandler: authenticateAdmin },
+            async (request: FastifyRequest, reply: FastifyReply) => {
+                try {
+                    const authHeader = request.headers.authorization;
+                    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                        return reply.code(401).send({
+                            message: 'No token provided',
+                        });
+                    }
+
+                    const token = authHeader.substring(7);
+                    await this.authService.logout(token);
+
+                    return {
+                        message: 'Logout successful',
+                    };
+                } catch (error) {
+                    fastify.log.error(error);
+                    return reply.code(500).send({
+                        message: 'Logout failed',
+                    });
+                }
+            }
+        );
+
         // Verify token endpoint
         fastify.get(
             '/auth/verify',
@@ -58,7 +87,7 @@ export class AuthController {
                     }
 
                     const token = authHeader.substring(7);
-                    const decoded = this.authService.verifyToken(token);
+                    const decoded = await this.authService.verifyToken(token);
 
                     return {
                         message: 'Token is valid',

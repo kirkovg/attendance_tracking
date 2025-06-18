@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Admin } from '../models/admin.model.js';
 import { LoginRequest, LoginResponse } from '../types/index.js';
+import { redisClient } from '../utils/redis.js';
 
 export class AuthService {
     private readonly jwtSecret: string;
@@ -46,8 +47,38 @@ export class AuthService {
         };
     }
 
-    verifyToken(token: string): any {
+    async logout(token: string): Promise<void> {
         try {
+            // Decode token to get expiration time
+            const decoded = jwt.decode(token) as any;
+            if (decoded && decoded.exp) {
+                const expirationTime = decoded.exp * 1000; // Convert to milliseconds
+                const currentTime = Date.now();
+                const timeToExpire = expirationTime - currentTime;
+
+                if (timeToExpire > 0) {
+                    // Add token to blacklist with expiration time
+                    await redisClient.setEx(
+                        `blacklist:${token}`,
+                        Math.floor(timeToExpire / 1000),
+                        '1'
+                    );
+                }
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+            throw new Error('Logout failed');
+        }
+    }
+
+    async verifyToken(token: string): Promise<any> {
+        try {
+            // Check if token is blacklisted
+            const isBlacklisted = await redisClient.get(`blacklist:${token}`);
+            if (isBlacklisted) {
+                throw new Error('Token has been revoked');
+            }
+
             return jwt.verify(token, this.jwtSecret);
         } catch (error) {
             throw new Error('Invalid token');

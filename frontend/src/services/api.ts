@@ -8,10 +8,17 @@ const api = axios.create({
     },
 });
 
-// Add request interceptor for logging
+// Add request interceptor for logging and auth token
 api.interceptors.request.use(
     (config) => {
         console.log('API Request:', config.method?.toUpperCase(), config.url);
+
+        // Add admin token to requests if available
+        const adminToken = localStorage.getItem('adminToken');
+        if (adminToken) {
+            config.headers.Authorization = `Bearer ${adminToken}`;
+        }
+
         return config;
     },
     (error) => {

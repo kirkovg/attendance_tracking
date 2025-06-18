@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import jwt from 'jsonwebtoken';
 import { AuthRequest } from '../types/index.js';
+import { AuthService } from '../services/auth.service.js';
 
 export async function authenticateAdmin(
     request: FastifyRequest,
@@ -16,9 +16,10 @@ export async function authenticateAdmin(
         }
 
         const token = authHeader.substring(7);
-        const jwtSecret = process.env.JWT_SECRET || 'your_jwt_secret_here';
 
-        const decoded = jwt.verify(token, jwtSecret) as any;
+        // Create a temporary auth service instance to verify token
+        const authService = new AuthService();
+        const decoded = await authService.verifyToken(token);
 
         if (!decoded || decoded.role !== 'admin') {
             return reply.code(403).send({
