@@ -20,8 +20,12 @@ services:
         ports:
             - '3001:3001'
         volumes:
-            - ./backend:/app
+            - ./backend/src:/app/src
+            - ./backend/package.json:/app/package.json
+            - ./backend/package-lock.json:/app/package-lock.json
+            - ./backend/tsconfig.json:/app/tsconfig.json
             - /app/node_modules
+            - /app/dist
         environment:
             - MONGODB_URI=mongodb://mongodb:27017/attendance
             - REDIS_URL=redis://redis:6379
