@@ -12,6 +12,15 @@ export class AttendanceService {
 
     constructor(private imageProcessor: ImageProcessor) {}
 
+    /**
+     * Escapes regex special characters to prevent regex injection
+     * @param string - The string to escape
+     * @returns The escaped string safe for use in regex patterns
+     */
+    private escapeRegex(string: string): string {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
     async recordAttendance(data: AttendanceRequest): Promise<AttendanceRecord> {
         const timestamp = new Date();
 
@@ -75,7 +84,8 @@ export class AttendanceService {
         const filter: any = {};
 
         if (query.email) {
-            filter.email = query.email;
+            const escapedEmail = this.escapeRegex(query.email);
+            filter.email = { $regex: escapedEmail, $options: 'i' };
         }
 
         if (query.type) {
@@ -110,7 +120,8 @@ export class AttendanceService {
     async getAttendanceSessions(email?: string): Promise<AttendanceSession[]> {
         const filter: any = {};
         if (email) {
-            filter.email = email;
+            const escapedEmail = this.escapeRegex(email);
+            filter.email = { $regex: escapedEmail, $options: 'i' };
         }
 
         const records = await Attendance.find(filter).sort({ timestamp: 1 }); // Sort by timestamp ascending (chronological order)
