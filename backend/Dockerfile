@@ -1,16 +1,8 @@
 FROM node:18-alpine
 
-# Install canvas dependencies
+# Install minimal dependencies for Sharp
 RUN apk add --no-cache \
-    build-base \
-    cairo-dev \
-    jpeg-dev \
-    pango-dev \
-    giflib-dev \
-    pixman-dev \
-    pangomm-dev \
-    libjpeg-turbo-dev \
-    freetype-dev
+    vips-dev
 
 WORKDIR /app
 
