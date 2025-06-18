@@ -3,6 +3,8 @@ import AttendanceModel from './models/attendance.model.js';
 import { AttendanceService } from './services/attendance.service.js';
 import { AttendanceController } from './controllers/attendance.controller.js';
 import { ImageProcessor } from './utils/imageProcessor.js';
+import { AuthService } from './services/auth.service.js';
+import { AuthController } from './controllers/auth.controller.js';
 
 export class Container {
     private static instance = createInjector();
@@ -16,7 +18,9 @@ export class Container {
             .provideValue('AttendanceModel', AttendanceModel)
             .provideClass('ImageProcessor', ImageProcessor)
             .provideClass('AttendanceService', AttendanceService)
-            .provideClass('AttendanceController', AttendanceController);
+            .provideClass('AttendanceController', AttendanceController)
+            .provideClass('AuthService', AuthService)
+            .provideClass('AuthController', AuthController);
 
         return container;
     }

@@ -51,21 +51,22 @@ mongoose
         process.exit(1);
     });
 
-Container.initialize()
-    .then((containerInstance) => {
-        const attendanceController = containerInstance.resolve(
-            'AttendanceController'
-        );
-        app.register(attendanceController.routes, { prefix: '/api' });
-        console.log('Dependency injection container initialized');
-    })
-    .catch((err) => {
-        console.error(
-            'Failed to initialize dependency injection container:',
-            err
-        );
-        process.exit(1);
-    });
+const setupDi = async () => {
+    const container = await Container.initialize();
+
+    const attendanceController = container.resolve('AttendanceController');
+    const authController = container.resolve('AuthController');
+
+    const registerConfig = { prefix: '/api' };
+
+    app.register(attendanceController.routes, registerConfig);
+    app.register(authController.routes, registerConfig);
+
+    container.resolve('AuthService').createDefaultAdmin();
+};
+
+// Initialize dependency injection container
+await setupDi();
 
 // Health check route
 app.get('/health', async () => {

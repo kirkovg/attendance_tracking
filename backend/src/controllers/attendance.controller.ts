@@ -12,6 +12,7 @@ import {
 } from 'fastify';
 import fs from 'fs';
 import { ImageProcessor } from '../utils/imageProcessor.js';
+import { authenticateAdmin } from '../utils/auth.middleware.js';
 
 export class AttendanceController {
     constructor(
@@ -79,9 +80,10 @@ export class AttendanceController {
             }
         );
 
-        // Get attendance history
+        // Get attendance history (protected - admin only)
         fastify.get<{ Querystring: AttendanceQuery }>(
             '/attendance/history',
+            { preHandler: authenticateAdmin },
             async (
                 request: FastifyRequest<{ Querystring: AttendanceQuery }>,
                 reply: FastifyReply
@@ -104,9 +106,10 @@ export class AttendanceController {
             }
         );
 
-        // Get attendance sessions (grouped entries/exits)
+        // Get attendance sessions (protected - admin only)
         fastify.get<{ Querystring: { email?: string } }>(
             '/attendance/sessions',
+            { preHandler: authenticateAdmin },
             async (
                 request: FastifyRequest<{ Querystring: { email?: string } }>,
                 reply: FastifyReply
@@ -127,9 +130,10 @@ export class AttendanceController {
             }
         );
 
-        // Get admin statistics
+        // Get admin statistics (protected - admin only)
         fastify.get(
             '/attendance/stats',
+            { preHandler: authenticateAdmin },
             async (_request: FastifyRequest, reply: FastifyReply) => {
                 try {
                     const stats = await this.attendanceService.getAdminStats();

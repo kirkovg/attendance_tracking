@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { Document } from 'mongoose';
+import { FastifyRequest } from 'fastify';
 
 export interface IAttendance extends Document {
     name: string;
@@ -9,6 +10,15 @@ export interface IAttendance extends Document {
     type: 'ENTRY' | 'EXIT';
     timestamp: Date;
     duration?: number; // Duration in minutes for completed sessions
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface IAdmin extends Document {
+    username: string;
+    password: string;
+    email: string;
+    role: 'admin';
     createdAt: Date;
     updatedAt: Date;
 }
@@ -31,6 +41,29 @@ export interface AttendanceQuery {
     startDate?: string;
     endDate?: string;
     type?: 'ENTRY' | 'EXIT';
+}
+
+export interface LoginRequest {
+    username: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    message: string;
+    token: string;
+    user: {
+        username: string;
+        email: string;
+        role: string;
+    };
+}
+
+export interface AuthRequest extends FastifyRequest {
+    user?: {
+        username: string;
+        email: string;
+        role: string;
+    };
 }
 
 export interface FastifyInstanceWithServices extends FastifyInstance {
