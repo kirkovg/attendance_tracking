@@ -82,5 +82,6 @@ cd backend && npm test
 -   paging for the admin sessions/history pages
 -   store images in a specific file system storage (s3 for example)
 -   create proper user registration for admins
+-   use consts instead of plain strings in most places
 -   create registration option for users, after which with face recognition - we can check whether they are really the ones checking in
 -   add prettier
