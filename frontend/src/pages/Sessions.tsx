@@ -62,11 +62,14 @@ const Sessions: React.FC = () => {
         fetchSessions();
     };
 
-    const formatDuration = (minutes?: number): string => {
-        if (!minutes) return 'N/A';
-        const hours = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        return `${hours}h ${mins}m`;
+    const formatDuration = (seconds?: number): string => {
+        if (!seconds) return 'N/A';
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        if (minutes > 0) {
+            return `${minutes}m ${remainingSeconds}s`;
+        }
+        return `${remainingSeconds}s`;
     };
 
     const formatDateTime = (timestamp: string): string => {

@@ -9,7 +9,7 @@ export interface IAttendance extends Document {
     imagePath: string;
     type: 'ENTRY' | 'EXIT';
     timestamp: Date;
-    duration?: number; // Duration in minutes for completed sessions
+    duration?: number; // Duration in seconds for completed sessions
     createdAt: Date;
     updatedAt: Date;
 }
@@ -98,6 +98,6 @@ export interface AttendanceSession {
 export interface AdminStats {
     totalEntries: number;
     totalExits: number;
-    activeUsers: number;
+    totalUsers: number;
     averageDuration: number;
 }

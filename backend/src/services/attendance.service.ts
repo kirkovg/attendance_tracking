@@ -35,7 +35,7 @@ export class AttendanceService {
             if (lastEntry) {
                 const timeDiff =
                     timestamp.getTime() - lastEntry.timestamp.getTime();
-                duration = Math.round(timeDiff / (1000 * 60)); // Convert to minutes
+                duration = Math.round(timeDiff / 1000); // Convert to seconds
             }
         }
 
@@ -113,7 +113,7 @@ export class AttendanceService {
             filter.email = email;
         }
 
-        const records = await Attendance.find(filter).sort({ timestamp: -1 });
+        const records = await Attendance.find(filter).sort({ timestamp: 1 }); // Sort by timestamp ascending (chronological order)
 
         const sessions: AttendanceSession[] = [];
         const entryMap = new Map<string, AttendanceRecord>();
@@ -161,13 +161,15 @@ export class AttendanceService {
     }
 
     async getAdminStats(): Promise<AdminStats> {
-        const [totalEntries, totalExits, activeUsers, completedSessions] =
+        const [totalEntries, totalExits, distinctEmails, completedSessions] =
             await Promise.all([
                 Attendance.countDocuments({ type: 'ENTRY' }),
                 Attendance.countDocuments({ type: 'EXIT' }),
-                Attendance.distinct('email').countDocuments(),
+                Attendance.distinct('email'),
                 Attendance.find({ duration: { $exists: true, $ne: null } }),
             ]);
+
+        const totalUsers = distinctEmails.length;
 
         const averageDuration =
             completedSessions.length > 0
@@ -180,7 +182,7 @@ export class AttendanceService {
         return {
             totalEntries,
             totalExits,
-            activeUsers,
+            totalUsers,
             averageDuration: Math.round(averageDuration),
         };
     }

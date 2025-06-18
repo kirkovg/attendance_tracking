@@ -40,13 +40,13 @@ export interface AttendanceSession {
         createdAt: string;
         updatedAt: string;
     };
-    duration?: number; // Duration in minutes
+    duration?: number; // Duration in seconds
 }
 
 export interface AdminStats {
     totalEntries: number;
     totalExits: number;
-    activeUsers: number;
+    totalUsers: number;
     averageDuration: number;
 }
 

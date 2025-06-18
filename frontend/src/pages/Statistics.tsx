@@ -44,10 +44,13 @@ const Statistics: React.FC = () => {
         fetchStats();
     }, []);
 
-    const formatDuration = (minutes: number): string => {
-        const hours = Math.floor(minutes / 60);
-        const mins = Math.round(minutes % 60);
-        return `${hours}h ${mins}m`;
+    const formatDuration = (seconds: number): string => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.round(seconds % 60);
+        if (minutes > 0) {
+            return `${minutes}m ${remainingSeconds}s`;
+        }
+        return `${remainingSeconds}s`;
     };
 
     const StatCard: React.FC<{
@@ -141,8 +144,8 @@ const Statistics: React.FC = () => {
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
                     <StatCard
-                        title="Active Users"
-                        value={stats.activeUsers}
+                        title="Total Users"
+                        value={stats.totalUsers}
                         icon={<PeopleIcon sx={{ color: 'white' }} />}
                         color="#2196f3"
                     />
@@ -198,8 +201,10 @@ const Statistics: React.FC = () => {
                                 Current Status
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {stats.activeUsers > 0
-                                    ? `${stats.activeUsers} users currently checked in`
+                                {stats.totalEntries - stats.totalExits > 0
+                                    ? `${
+                                          stats.totalEntries - stats.totalExits
+                                      } users currently checked in`
                                     : 'No users currently checked in'}
                             </Typography>
                         </Box>
