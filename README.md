@@ -45,6 +45,11 @@ The application will be available at:
 -   Frontend: http://localhost:3000
 -   Backend API: http://localhost:3001
 
+3. Use the following credentials for the admin login:
+
+-   Username: admin
+-   Password: admin123
+
 ## Project Structure
 
 ```
@@ -70,3 +75,12 @@ cd frontend && npm test
 # Backend tests
 cd backend && npm test
 ```
+
+## Further improvements
+
+-   more validation on the UI
+-   paging for the admin sessions/history pages
+-   store images in a specific file system storage (s3 for example)
+-   create proper user registration for admins
+-   create registration option for users, after which with face recognition - we can check whether they are really the ones checking in
+-   add prettier
