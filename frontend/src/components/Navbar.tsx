@@ -12,6 +12,8 @@ import {
     Home as HomeIcon,
     History as HistoryIcon,
     Person as PersonIcon,
+    Timeline as TimelineIcon,
+    TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 
 const Navbar: React.FC = () => {
@@ -26,12 +28,13 @@ const Navbar: React.FC = () => {
                     >
                         Attendance Tracking System
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                         <Button
                             color="inherit"
                             component={RouterLink}
                             to="/"
                             startIcon={<HomeIcon />}
+                            size="small"
                         >
                             Home
                         </Button>
@@ -40,6 +43,7 @@ const Navbar: React.FC = () => {
                             component={RouterLink}
                             to="/attendance"
                             startIcon={<PersonIcon />}
+                            size="small"
                         >
                             Attendance
                         </Button>
@@ -48,8 +52,27 @@ const Navbar: React.FC = () => {
                             component={RouterLink}
                             to="/history"
                             startIcon={<HistoryIcon />}
+                            size="small"
                         >
                             History
+                        </Button>
+                        <Button
+                            color="inherit"
+                            component={RouterLink}
+                            to="/sessions"
+                            startIcon={<TimelineIcon />}
+                            size="small"
+                        >
+                            Sessions
+                        </Button>
+                        <Button
+                            color="inherit"
+                            component={RouterLink}
+                            to="/statistics"
+                            startIcon={<TrendingUpIcon />}
+                            size="small"
+                        >
+                            Statistics
                         </Button>
                     </Box>
                 </Toolbar>

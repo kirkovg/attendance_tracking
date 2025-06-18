@@ -114,7 +114,9 @@ export class AttendanceController {
                 try {
                     const { email } = request.query;
                     const sessions =
-                        await AttendanceService.getAttendanceSessions(email);
+                        await this.attendanceService.getAttendanceSessions(
+                            email
+                        );
                     return sessions;
                 } catch (error) {
                     fastify.log.error(error);
@@ -136,39 +138,6 @@ export class AttendanceController {
                     fastify.log.error(error);
                     return reply.code(500).send({
                         message: 'Error fetching statistics',
-                    });
-                }
-            }
-        );
-
-        // Verify identity
-        fastify.post<{ Body: { email: string; image: string } }>(
-            '/attendance/verify',
-            async (
-                request: FastifyRequest<{
-                    Body: { email: string; image: string };
-                }>,
-                reply: FastifyReply
-            ) => {
-                try {
-                    const { email, image } = request.body;
-
-                    if (!email || !image) {
-                        return reply.code(400).send({
-                            message: 'Email and image are required',
-                        });
-                    }
-
-                    const verification =
-                        await this.attendanceService.verifyIdentity(
-                            email,
-                            image
-                        );
-                    return verification;
-                } catch (error) {
-                    fastify.log.error(error);
-                    return reply.code(500).send({
-                        message: 'Error verifying identity',
                     });
                 }
             }

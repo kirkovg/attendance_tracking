@@ -18,3 +18,40 @@ export interface AttendanceState {
     error: string | null;
     success: string | null;
 }
+
+export interface AttendanceSession {
+    entry: {
+        _id: string;
+        name: string;
+        email: string;
+        image: string;
+        type: 'ENTRY';
+        timestamp: string;
+        createdAt: string;
+        updatedAt: string;
+    };
+    exit?: {
+        _id: string;
+        name: string;
+        email: string;
+        image: string;
+        type: 'EXIT';
+        timestamp: string;
+        createdAt: string;
+        updatedAt: string;
+    };
+    duration?: number; // Duration in minutes
+}
+
+export interface AdminStats {
+    totalEntries: number;
+    totalExits: number;
+    activeUsers: number;
+    averageDuration: number;
+}
+
+export interface VerificationResult {
+    verified: boolean;
+    similarity: number;
+    message?: string;
+}

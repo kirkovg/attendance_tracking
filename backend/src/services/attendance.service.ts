@@ -107,9 +107,7 @@ export class AttendanceService {
         }));
     }
 
-    static async getAttendanceSessions(
-        email?: string
-    ): Promise<AttendanceSession[]> {
+    async getAttendanceSessions(email?: string): Promise<AttendanceSession[]> {
         const filter: any = {};
         if (email) {
             filter.email = email;
