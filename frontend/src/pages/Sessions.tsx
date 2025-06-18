@@ -15,11 +15,17 @@ import {
     CircularProgress,
     Alert,
     Chip,
+    Avatar,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    IconButton,
 } from '@mui/material';
 import {
     AccessTime as AccessTimeIcon,
     Person as PersonIcon,
     Email as EmailIcon,
+    Close as CloseIcon,
 } from '@mui/icons-material';
 import api from '../services/api';
 import { AttendanceSession } from '../types';
@@ -29,6 +35,8 @@ const Sessions: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [email, setEmail] = useState('');
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [imageDialogOpen, setImageDialogOpen] = useState(false);
 
     const fetchSessions = async () => {
         setLoading(true);
@@ -74,6 +82,23 @@ const Sessions: React.FC = () => {
 
     const formatDateTime = (timestamp: string): string => {
         return new Date(timestamp).toLocaleString();
+    };
+
+    const handleImageClick = (imagePath: string) => {
+        setSelectedImage(imagePath);
+        setImageDialogOpen(true);
+    };
+
+    const handleCloseImageDialog = () => {
+        setImageDialogOpen(false);
+        setSelectedImage(null);
+    };
+
+    const getImageUrl = (imagePath: string): string => {
+        // Construct the full URL to the backend image endpoint
+        const baseUrl =
+            import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+        return `${baseUrl}/uploads/${imagePath}`;
     };
 
     return (
@@ -150,7 +175,9 @@ const Sessions: React.FC = () => {
                                         Email
                                     </TableCell>
                                     <TableCell>Check In</TableCell>
+                                    <TableCell>Check In Image</TableCell>
                                     <TableCell>Check Out</TableCell>
+                                    <TableCell>Check Out Image</TableCell>
                                     <TableCell>
                                         <AccessTimeIcon
                                             sx={{
@@ -178,11 +205,62 @@ const Sessions: React.FC = () => {
                                             )}
                                         </TableCell>
                                         <TableCell>
+                                            {session.entry.imagePath && (
+                                                <Avatar
+                                                    src={getImageUrl(
+                                                        session.entry.imagePath
+                                                    )}
+                                                    alt={`${session.entry.name} Entry`}
+                                                    sx={{
+                                                        width: 50,
+                                                        height: 50,
+                                                        cursor: 'pointer',
+                                                        '&:hover': {
+                                                            opacity: 0.8,
+                                                        },
+                                                    }}
+                                                    onClick={() =>
+                                                        handleImageClick(
+                                                            session.entry
+                                                                .imagePath
+                                                        )
+                                                    }
+                                                />
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
                                             {session.exit
                                                 ? formatDateTime(
                                                       session.exit.timestamp
                                                   )
                                                 : 'Not checked out'}
+                                        </TableCell>
+                                        <TableCell>
+                                            {session.exit?.imagePath ? (
+                                                <Avatar
+                                                    src={getImageUrl(
+                                                        session.exit.imagePath
+                                                    )}
+                                                    alt={`${session.exit.name} Exit`}
+                                                    sx={{
+                                                        width: 50,
+                                                        height: 50,
+                                                        cursor: 'pointer',
+                                                        '&:hover': {
+                                                            opacity: 0.8,
+                                                        },
+                                                    }}
+                                                    onClick={() =>
+                                                        handleImageClick(
+                                                            session?.exit
+                                                                ?.imagePath ||
+                                                                ''
+                                                        )
+                                                    }
+                                                />
+                                            ) : (
+                                                '-'
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             {formatDuration(session.duration)}
@@ -206,7 +284,7 @@ const Sessions: React.FC = () => {
                                 ))}
                                 {sessions.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={6} align="center">
+                                        <TableCell colSpan={8} align="center">
                                             No sessions found
                                         </TableCell>
                                     </TableRow>
@@ -216,6 +294,52 @@ const Sessions: React.FC = () => {
                     </TableContainer>
                 )}
             </Paper>
+
+            {/* Image Dialog */}
+            <Dialog
+                open={imageDialogOpen}
+                onClose={handleCloseImageDialog}
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogTitle>
+                    Attendance Image
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleCloseImageDialog}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    {selectedImage && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                minHeight: 400,
+                            }}
+                        >
+                            <img
+                                src={getImageUrl(selectedImage)}
+                                alt="Attendance"
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    objectFit: 'contain',
+                                }}
+                            />
+                        </Box>
+                    )}
+                </DialogContent>
+            </Dialog>
         </Container>
     );
 };

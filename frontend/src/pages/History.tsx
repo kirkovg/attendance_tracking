@@ -14,10 +14,16 @@ import {
     Button,
     CircularProgress,
     Alert,
+    Avatar,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    IconButton,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { Close as CloseIcon } from '@mui/icons-material';
 import api from '../services/api';
 import { AttendanceRecord } from '../types';
 
@@ -28,6 +34,8 @@ const History: React.FC = () => {
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [email, setEmail] = useState('');
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [imageDialogOpen, setImageDialogOpen] = useState(false);
 
     const fetchRecords = async () => {
         setLoading(true);
@@ -63,6 +71,23 @@ const History: React.FC = () => {
         setStartDate(null);
         setEndDate(null);
         fetchRecords();
+    };
+
+    const handleImageClick = (imagePath: string) => {
+        setSelectedImage(imagePath);
+        setImageDialogOpen(true);
+    };
+
+    const handleCloseImageDialog = () => {
+        setImageDialogOpen(false);
+        setSelectedImage(null);
+    };
+
+    const getImageUrl = (imagePath: string): string => {
+        // Construct the full URL to the backend image endpoint
+        const baseUrl =
+            import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+        return `${baseUrl}/uploads/${imagePath}`;
     };
 
     return (
@@ -134,6 +159,7 @@ const History: React.FC = () => {
                                     <TableCell>Email</TableCell>
                                     <TableCell>Type</TableCell>
                                     <TableCell>Timestamp</TableCell>
+                                    <TableCell>Image</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -147,11 +173,34 @@ const History: React.FC = () => {
                                                 record.timestamp
                                             ).toLocaleString()}
                                         </TableCell>
+                                        <TableCell>
+                                            {record.imagePath && (
+                                                <Avatar
+                                                    src={getImageUrl(
+                                                        record.imagePath
+                                                    )}
+                                                    alt={`${record.name} ${record.type}`}
+                                                    sx={{
+                                                        width: 50,
+                                                        height: 50,
+                                                        cursor: 'pointer',
+                                                        '&:hover': {
+                                                            opacity: 0.8,
+                                                        },
+                                                    }}
+                                                    onClick={() =>
+                                                        handleImageClick(
+                                                            record.imagePath
+                                                        )
+                                                    }
+                                                />
+                                            )}
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                                 {records.length === 0 && (
                                     <TableRow>
-                                        <TableCell colSpan={4} align="center">
+                                        <TableCell colSpan={5} align="center">
                                             No records found
                                         </TableCell>
                                     </TableRow>
@@ -161,6 +210,52 @@ const History: React.FC = () => {
                     </TableContainer>
                 )}
             </Paper>
+
+            {/* Image Dialog */}
+            <Dialog
+                open={imageDialogOpen}
+                onClose={handleCloseImageDialog}
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogTitle>
+                    Attendance Image
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleCloseImageDialog}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    {selectedImage && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                minHeight: 400,
+                            }}
+                        >
+                            <img
+                                src={getImageUrl(selectedImage)}
+                                alt="Attendance"
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    objectFit: 'contain',
+                                }}
+                            />
+                        </Box>
+                    )}
+                </DialogContent>
+            </Dialog>
         </Container>
     );
 };

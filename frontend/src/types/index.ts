@@ -2,6 +2,7 @@ export interface AttendanceRecord {
     name: string;
     email: string;
     image: string;
+    imagePath: string;
     type: 'ENTRY' | 'EXIT';
     timestamp: string;
     createdAt: string;
@@ -25,6 +26,7 @@ export interface AttendanceSession {
         name: string;
         email: string;
         image: string;
+        imagePath: string;
         type: 'ENTRY';
         timestamp: string;
         createdAt: string;
@@ -35,6 +37,7 @@ export interface AttendanceSession {
         name: string;
         email: string;
         image: string;
+        imagePath: string;
         type: 'EXIT';
         timestamp: string;
         createdAt: string;
