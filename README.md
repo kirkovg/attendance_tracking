@@ -78,7 +78,7 @@ cd backend && npm test
 
 ## Further improvements
 
--   more validation on the UI
+-   more validation on the UI and backend
 -   paging for the admin sessions/history pages
 -   store images in a specific file system storage (s3 for example)
 -   create proper user registration for admins
