@@ -15,7 +15,7 @@ import {
     Timeline as TimelineIcon,
     TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
-import { useAdminAuth } from '../App';
+import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 

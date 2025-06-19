@@ -11,7 +11,7 @@ import {
     CircularProgress,
 } from '@mui/material';
 import api from '../services/api';
-import { useAdminAuth } from '../App';
+import { useAdminAuth } from '../contexts/AdminAuthContext';
 
 const AdminLogin: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -55,6 +55,7 @@ const AdminLogin: React.FC = () => {
                         fullWidth
                         margin="normal"
                         required
+                        data-testid="username"
                     />
                     <TextField
                         label="Password"
@@ -64,6 +65,7 @@ const AdminLogin: React.FC = () => {
                         fullWidth
                         margin="normal"
                         required
+                        data-testid="password"
                     />
                     {error && (
                         <Alert severity="error" sx={{ mt: 2 }}>
